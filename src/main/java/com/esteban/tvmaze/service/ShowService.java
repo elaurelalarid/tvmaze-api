@@ -1,8 +1,13 @@
 package com.esteban.tvmaze.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.server.ResponseStatusException;
+
 
 import com.esteban.tvmaze.client.TvMazeClient;
 import com.esteban.tvmaze.dto.ShowSearchResponse;
@@ -43,6 +48,21 @@ public class ShowService {
 							show.genres());
 				})
 				.toList();
+	}
+	
+	
+	// Obtener el show por id
+	public Map<String, Object> getShowById(Integer showId){
+		try {
+			return tvMazeClient.getShowById(showId);
+		}
+		// Si no se encuentra, retornamos NOT FOUND (404)
+		catch(HttpClientErrorException.NotFound exception) {
+			throw new ResponseStatusException(
+					HttpStatus.NOT_FOUND, 
+					"Show no encontrado", 
+					exception);
+		}
 	}
 	
 }
