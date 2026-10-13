@@ -17,6 +17,13 @@ import org.slf4j.LoggerFactory;
 import com.esteban.tvmaze.model.CachedShow;
 import com.esteban.tvmaze.repository.ShowRepository;
 
+import java.util.stream.Collectors;
+
+import com.esteban.tvmaze.dto.CommentResponse;
+import com.esteban.tvmaze.model.ShowComment;
+import com.esteban.tvmaze.repository.CommentRepository;
+
+
 
 @Service
 public class ShowService {
@@ -26,27 +33,56 @@ public class ShowService {
 	
 	private final TvMazeClient tvMazeClient;
 	private final ShowRepository showRepository;
+	private final CommentRepository commentRepository;
 	
-	public ShowService(TvMazeClient tvMazeClient, ShowRepository showRepository) {
+	
+	public ShowService(
+			TvMazeClient tvMazeClient, 
+			ShowRepository showRepository,
+			CommentRepository commentRepository) {
 		this.tvMazeClient = tvMazeClient;
 		this.showRepository = showRepository;
+		this.commentRepository = commentRepository;
+		
 	}
 	
 	
-	// Transformamos la respuesta externa en los campos solicitados
 	public List<ShowSearchResponse> searchShows(String query){
-		return tvMazeClient.searchRows(query.trim())
+		var results = tvMazeClient.searchRows(query.trim());
+		
+		if(results.isEmpty()) {
+			return List.of();
+		}
+		
+		List<Integer> showIds = results.stream()
+				.map(result -> result.show().id())
+				.distinct()
+				.toList();
+		
+		Map<Integer, List<CommentResponse>> commentsByShow = 
+				commentRepository.findByShowIdInOrderByCreatedAtAsc(showIds)
 				.stream()
+				.collect(Collectors.groupingBy(
+						ShowComment::showId,
+						Collectors.mapping(
+								comment -> new CommentResponse(
+										comment.comment(),
+										comment.rating()
+						),
+								Collectors.toList()
+								)
+						));
+		
+		return results.stream()
 				.map(result -> {
-					var show = result.show();
+					var show = result.show(); 
 					
-					String channel = null;  
+					String channel = null; 
 					
-					// Si network no existe usamos webChannel
 					if(show.network() != null) {
-						channel = show.network().name(); 
+						channel = show.network().name();
 					}
-					else if(show.webChannel()!=null) {
+					else if(show.webChannel()!= null) {
 						channel = show.webChannel().name();
 					}
 					
@@ -55,9 +91,12 @@ public class ShowService {
 							show.name(),
 							channel,
 							show.summary(),
-							show.genres());
+							show.genres(),
+							commentsByShow.getOrDefault(show.id(), List.of())
+							);
 				})
 				.toList();
+			
 	}
 	
 	

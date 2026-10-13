@@ -11,4 +11,6 @@ public interface CommentRepository extends MongoRepository<ShowComment, String>{
 
 	List<ShowComment> findByShowIdOrderByCreatedAtAsc(Integer showId);
 	
+	List<ShowComment> findByShowIdInOrderByCreatedAtAsc(List<Integer> showIds); 
+	
 }
