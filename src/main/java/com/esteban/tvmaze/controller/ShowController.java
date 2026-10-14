@@ -21,7 +21,7 @@ import com.esteban.tvmaze.service.ShowService;
 @RequestMapping("/api")
 public class ShowController {
 	
-	public final ShowService showService;
+	private final ShowService showService;
 	
 	public ShowController(ShowService showService) {
 		this.showService = showService;
@@ -41,7 +41,7 @@ public class ShowController {
 			@PathVariable(name = "show_id")
 			@Positive(message = "show_id debe ser mayor que cero")
 			Integer showId){
-		return showService.getShowById(showId);
+		return showService.getShowWithComments(showId); 
 	}
 	
 	

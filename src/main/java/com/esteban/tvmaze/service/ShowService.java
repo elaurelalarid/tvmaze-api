@@ -2,6 +2,7 @@ package com.esteban.tvmaze.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.LinkedHashMap;
 
 import org.springframework.stereotype.Service;
 import org.springframework.http.HttpStatus;
@@ -130,5 +131,25 @@ public class ShowService {
 					exception);
 		}
 	}
+	
+	
+	public Map<String, Object> getShowWithComments(Integer showId){
+		Map<String, Object> response = new LinkedHashMap<>(getShowById(showId)); 
+		
+		List<CommentResponse> comments = 
+				commentRepository.findByShowIdOrderByCreatedAtAsc(showId)
+				.stream()
+				.map(comment -> new CommentResponse(
+						comment.comment(),
+						comment.rating()
+						)).toList();
+		
+		response.put("comments", comments); 
+		
+		return response;
+		
+		
+	}
+	
 	
 }
