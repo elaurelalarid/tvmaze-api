@@ -1,0 +1,87 @@
+{
+  "info": {
+    "_postman_id": "23f68223-2da1-479b-b02b-a24fd2bd6496",
+    "name": "Examen Java Back",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "50055940",
+    "_collection_link": "https://go.postman.co/collection/50055940-23f68223-2da1-479b-b02b-a24fd2bd6496?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Search",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/search?search_query=batman",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "search"
+          ],
+          "query": [
+            {
+              "key": "search_query",
+              "value": "batman"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "showById",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/shows/975",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "shows",
+            "975"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Save",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"show_id\": 975,\r\n  \"comment\": \"Tercer comentario de prueba\",\r\n  \"rating\": 5\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/comments",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "comments"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
